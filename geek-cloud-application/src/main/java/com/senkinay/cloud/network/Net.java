@@ -11,6 +11,7 @@ public class Net {
     private final DataOutputStream os;
 
     private final String host;
+
     private final int port;
 
     public Net(String host, int port) throws IOException {

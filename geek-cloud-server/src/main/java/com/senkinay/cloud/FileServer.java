@@ -13,7 +13,9 @@ public class FileServer {
 
         while (true) {
             Socket socket = server.accept();
+
             new Thread(new FileMessageHandler(socket)).start();
+
         }
 
     }

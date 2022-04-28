@@ -24,12 +24,16 @@ public class CopyFileToServer implements Runnable {
             this.net.writeUTF(command);
             this.net.getOs().writeLong(file.length());
             this.net.getOs().writeUTF(file.getName());
+
             FileInputStream fis = new FileInputStream(file);
+
             byte [] buffer = new byte[64 * 1024];
             int count;
+
             while((count = fis.read(buffer)) != -1){
                 this.net.getOs().write(buffer, 0, count);
             }
+
             this.net.getOs().flush();
             fis.close();
 

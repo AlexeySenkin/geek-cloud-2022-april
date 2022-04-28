@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import java.io.File;
@@ -14,7 +15,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
+
     private Net net;
+
+    @FXML
+    public Label captionServer;
 
     @FXML
     public TextField inputClient;
@@ -49,8 +54,10 @@ public class MainController implements Initializable {
     }
 
     public void getFilesFromClientDir() {
+
         File dir = new File("files-client/client-1");
         String[] files = dir.list();
+
         for (int i = 0; i < files.length; i++) {
             this.viewClient.getItems().addAll(files[i]);
         }

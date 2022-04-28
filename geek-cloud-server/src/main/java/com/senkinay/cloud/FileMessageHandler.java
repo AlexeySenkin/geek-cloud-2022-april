@@ -37,7 +37,7 @@ public class FileMessageHandler implements Runnable {
         String fileName = is.readUTF();
         byte[] buffer = new byte[64 * 1024];
         FileOutputStream fos = new FileOutputStream(dir.getName() + "/" + fileName);
-        int count = 0;
+        int count;
         int total = 0;
         while ((count = is.read(buffer, 0, (4096))) != -1){
             total += count;
@@ -48,6 +48,7 @@ public class FileMessageHandler implements Runnable {
         }
         fos.flush();
         fos.close();
+
         System.err.println(command + " : " + fileName + ". OK.");
     }
 
@@ -55,6 +56,7 @@ public class FileMessageHandler implements Runnable {
     public void run() {
         try {
             while (true) {
+
                 String command = is.readUTF();
 
                 if (command.equals("#copyfile#")) {
