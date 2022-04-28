@@ -5,6 +5,7 @@ import com.senkinay.cloud.network.Net;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import java.io.File;
@@ -13,8 +14,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
-
     private Net net;
+
+    @FXML
+    public TextField inputClient;
+    @FXML
+    public Button copyToServer;
 
     @FXML
     public ListView<String> viewServer;
@@ -26,7 +31,7 @@ public class MainController implements Initializable {
     public TextField inputServer;
 
 
-    @FXML
+
     private void readListFiles() {
         try {
             this.viewServer.getItems().clear();
