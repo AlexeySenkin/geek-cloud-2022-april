@@ -19,15 +19,13 @@ public class Terminal {
 
     // TODO: 19.04.2022 implement commands: cat, cd, mkdir, touch
 
-    private final Path dir;
+    private Path dir;
     private final ServerSocketChannel serverChannel;
     private final Selector selector;
     private final ByteBuffer buffer = ByteBuffer.allocate(256);
 
     public Terminal() throws IOException {
-
-        dir = Path.of("D:/GeegBrains/JAVA/geek-cloud-2022-april/files-server");
-
+        dir = Path.of("files-server");
 
         serverChannel = ServerSocketChannel.open();
         serverChannel.bind(new InetSocketAddress(8189));
@@ -69,19 +67,29 @@ public class Terminal {
         System.out.println("Received: " + message);
 
         switch (message) {
-            case "1" ->  //ls
+            case "ls" ->  //ls
                     channel.write(ByteBuffer.wrap(
                                     getLsResultString().getBytes(StandardCharsets.UTF_8)
                             )
                     );
-            case "2" ->   //cat
+            case "cat" ->   //cat
                     channel.write(ByteBuffer.wrap(
                                     getCatResultString("file-1.java").getBytes(StandardCharsets.UTF_8)
                             )
                     );
-            case "3" ->   //mkdir
+            case "mkdir" ->   //mkdir
                     channel.write(ByteBuffer.wrap(
                                     getMkDirResultString("server-1").getBytes(StandardCharsets.UTF_8)
+                            )
+                    );
+            case "touch" ->   //touch
+                    channel.write(ByteBuffer.wrap(
+                                    getTouchResultString("file-0.java").getBytes(StandardCharsets.UTF_8)
+                            )
+                    );
+            case "cd" ->   //cd
+                    channel.write(ByteBuffer.wrap(
+                                    getCdResultString("server-1").getBytes(StandardCharsets.UTF_8)
                             )
                     );
             default -> channel.write(ByteBuffer.wrap("Unknown command\n\r".getBytes(StandardCharsets.UTF_8)));
@@ -106,7 +114,7 @@ public class Terminal {
             Path file = Path.of(dir.toString() + "/" + dirName );
             Files.createDirectory(file);
         } catch(FileAlreadyExistsException e){
-            String error = "folder already exists";
+            String error = "folder " + dirName + " already exists";
             byte[] result = error.getBytes(StandardCharsets.UTF_8);
             return new String(result, StandardCharsets.UTF_8);
         } catch (IOException e) {
@@ -116,6 +124,25 @@ public class Terminal {
         return new String(result, StandardCharsets.UTF_8);
     }
 
+    private String getTouchResultString(String fileName) {
+        try {
+            Path file = Path.of(dir.toString() + "/" + fileName );
+            Files.createFile(file);
+        } catch(FileAlreadyExistsException e){
+            String error = "file " + fileName +  " already exists";
+            byte[] result = error.getBytes(StandardCharsets.UTF_8);
+            return new String(result, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        byte[] result = fileName.getBytes(StandardCharsets.UTF_8);
+        return new String(result, StandardCharsets.UTF_8);
+    }
+    private String getCdResultString(String dirName) {
+        dir = Path.of(dir.toString() + "/" + dirName );
+        byte[] result = ("cd dir " + dir).getBytes(StandardCharsets.UTF_8);
+        return new String(result, StandardCharsets.UTF_8);
+    }
     private String readMessageFromChannel(SocketChannel channel) throws IOException {
         StringBuilder sb = new StringBuilder();
         while (true) {
@@ -141,7 +168,7 @@ public class Terminal {
         channel.configureBlocking(false);
         channel.register(selector, SelectionKey.OP_READ);
         System.out.println("Client accepted...");
-        channel.write(ByteBuffer.wrap("Welcome in SenkinAlexey terminal!\n\r-> ".getBytes(StandardCharsets.UTF_8)));
+        channel.write(ByteBuffer.wrap("Welcome in Alexey terminal!\n\r-> ".getBytes(StandardCharsets.UTF_8)));
     }
 
     public static void main(String[] args) throws IOException {
