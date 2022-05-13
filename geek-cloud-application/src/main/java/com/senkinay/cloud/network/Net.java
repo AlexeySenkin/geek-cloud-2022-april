@@ -5,11 +5,16 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+
+import com.senkinay.cloud.model.AbstractMessage;
+import io.netty.handler.codec.serialization.ObjectDecoderInputStream;
+import io.netty.handler.codec.serialization.ObjectEncoderOutputStream;
+
+
 public class Net {
     private final Socket socket;
-    private final DataInputStream is;
-    private final DataOutputStream os;
-
+    private final ObjectDecoderInputStream is;
+    private final ObjectEncoderOutputStream os;
     private final String host;
 
     private final int port;
@@ -18,25 +23,19 @@ public class Net {
         this.host = host;
         this.port = port;
         this.socket = new Socket(host, port);
-        this.is = new DataInputStream(socket.getInputStream());
-        this.os = new DataOutputStream(socket.getOutputStream());
+
+        this.os = new ObjectEncoderOutputStream(socket.getOutputStream());
+        this.is = new ObjectDecoderInputStream(socket.getInputStream());
     }
 
-    public Long readLong() throws IOException {
-        return is.readLong();
-    }
-    public String readUtf() throws IOException {
-        return is.readUTF();
-    }
-    public void writeUTF(String command) throws IOException {
-        os.writeUTF(command);
+    public AbstractMessage read() throws IOException, ClassNotFoundException {
+        return (AbstractMessage) is.readObject();
     }
 
-    public DataInputStream getIs() {
-        return is;
+
+    public void write(AbstractMessage message) throws IOException {
+        os.writeObject(message);
     }
 
-    public DataOutputStream getOs() {
-        return os;
-    }
+
 }
