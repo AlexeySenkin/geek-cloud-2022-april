@@ -28,7 +28,7 @@ public class FileHandler extends SimpleChannelInboundHandler<AbstractMessage> {
         ctx.writeAndFlush(new ListMessage(serverDir));
     }
 
-    public void sendFileFromServerDir(ChannelHandlerContext ctx, AbstractMessage msg) throws Exception {
+    public void sendFileFromServerDir(ChannelHandlerContext ctx, AbstractMessage msg) {
         log.info("send: {} massage", "FileDownloadMessage");
         //ctx.writeAndFlush(new FileDownloadMessage();
     }
@@ -37,7 +37,12 @@ public class FileHandler extends SimpleChannelInboundHandler<AbstractMessage> {
     protected void channelRead0(ChannelHandlerContext ctx, AbstractMessage msg) throws Exception {
         log.info("received: {} massage", msg.getMessageType().getName());
         if (msg instanceof FileUploadMessage fileUpload) {
-            Files.write(serverDir.resolve(fileUpload.getName()),fileUpload.getBytes());
+
+            if (!Files.exists(serverDir.resolve(fileUpload.getName()).getParent())) {
+                Files.createDirectories(serverDir.resolve(fileUpload.getName()).getParent());
+            }
+            Files.write(serverDir.resolve(fileUpload.getName()), fileUpload.getBytes());
+
             getFileListFromServerDir(ctx);
         }
         if (msg instanceof FileDownloadMessage fileDownload) {
