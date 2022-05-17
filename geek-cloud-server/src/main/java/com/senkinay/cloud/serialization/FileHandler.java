@@ -16,7 +16,7 @@ import java.nio.file.Path;
 public class FileHandler extends SimpleChannelInboundHandler<AbstractMessage> {
 
 
-    private final Path serverDir = Path.of("files-server");
+    private final Path serverDir = Path.of("files-server/senkinay");
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {

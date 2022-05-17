@@ -5,6 +5,7 @@ import com.senkinay.cloud.model.FileDownloadMessage;
 import com.senkinay.cloud.model.FileUploadMessage;
 import com.senkinay.cloud.model.ListMessage;
 import com.senkinay.cloud.network.Net;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -50,6 +51,11 @@ public class MainController implements Initializable {
     private List<Path> currentClientDir;
 
     public MainController() {
+    }
+
+    public void closeClientApplication(ActionEvent actionEvent) {
+        Platform.exit();
+        System.exit(0);
     }
 
 
@@ -136,7 +142,7 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            clientDir = Path.of("files-client/client-1");
+            clientDir = Path.of("files-client/senkinay");
 
             clientFiles = new ArrayList<>();
             currentClientDir= new ArrayList<>();
