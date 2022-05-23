@@ -3,14 +3,16 @@ package com.senkinay.cloud.controllers;
 import com.senkinay.cloud.model.*;
 import com.senkinay.cloud.network.Net;
 import javafx.application.Platform;
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
@@ -18,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -31,13 +34,15 @@ public class MainController implements Initializable {
     public ListView<String> viewServer;
 
     @FXML
-    public ListView<String> viewClient;
+    public TableView tableViewClient;
 
     @FXML
     public Button upload;
 
     @FXML
     public Button download;
+
+
 
     private Path clientDir;
 
@@ -66,6 +71,17 @@ public class MainController implements Initializable {
         @Override
         public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) {
 
+            if (fileAttributes.isEmpty()) {
+                fileAttributes.add(new FileAttribute("client_root",
+                        path.getParent().toString(),
+                        false,
+                        true,
+                        false,
+                        path.getParent().toString(),
+                        null,
+                        0));
+                currentClientDir.add(path.getParent());
+            }
             fileAttributes.add(new FileAttribute("client",
                     path.toString(),
                     attributes.isRegularFile(),
@@ -95,12 +111,14 @@ public class MainController implements Initializable {
                 if (message instanceof FileDownloadMessage fdm) {
                     Files.write(clientDir.resolve(fdm.getName()),fdm.getBytes());
                     Platform.runLater(()->{
-                        viewClient.getItems().clear();
-                        try {
-                            viewClient.getItems().addAll(getClientFiles());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+
+                        //viewClient.getItems().clear();
+                        //try {
+                        //    viewClient.getItems().addAll(getClientFiles());
+                        //} catch (IOException e) {
+                        //    e.printStackTrace();
+                       // }
+
                     });
                 }
             }
@@ -168,7 +186,6 @@ public class MainController implements Initializable {
     private void updateTreeDir(Path pathDir) {
 
         if (pathDir.equals(clientDir)) {
-
             List<TreeItem<FileAttribute>> fileAttributeTreeItem = new ArrayList<>();
 
             for (FileAttribute fileAttribute : fileAttributes) {
@@ -180,6 +197,7 @@ public class MainController implements Initializable {
             for (int i = 1; i < fileAttributes.size(); i++) {
                 if (fileAttributeTreeItem.get(i).getValue().getDir()) {
                     //TODO допилить дерево файлов
+
                 }
                 fileAttributeTreeItem.get(0).getChildren().addAll(fileAttributeTreeItem.get(i));
             }
@@ -187,6 +205,40 @@ public class MainController implements Initializable {
             Platform.runLater(()->{
                 clientTreeDir.setRoot(fileAttributeTreeItem.get(0));
                 clientTreeDir.setShowRoot(true);
+
+
+
+                updateTableView(clientDir,fileAttributes);
+            });
+
+        } else {
+
+        }
+    }
+
+    private void updateTableView(Path pathDir, List<FileAttribute> fileAttributes) {
+        if (pathDir.equals(clientDir)) {
+            TableColumn<FileAttribute, String> nameCol =
+                    new TableColumn<FileAttribute,String>("Имя");
+            TableColumn<FileAttribute, FileTime> fileModificationDateCol =
+                    new TableColumn<FileAttribute, FileTime>("Дата изменения");
+            TableColumn<FileAttribute, String> typeCol =
+                    new TableColumn<FileAttribute, String>("Тип");
+            TableColumn<FileAttribute, Long> sizeCol =
+                    new TableColumn<FileAttribute,Long>("Размер");
+
+            nameCol.setCellValueFactory(new PropertyValueFactory<>("type"));
+            fileModificationDateCol.setCellValueFactory(new PropertyValueFactory<>("fileModificationDate"));
+
+            typeCol.setCellValueFactory(new PropertyValueFactory<>("fileType"));
+            sizeCol.setCellValueFactory(new PropertyValueFactory<>("size"));
+
+            nameCol.setSortType(TableColumn.SortType.DESCENDING);
+
+            Platform.runLater(()->{
+                tableViewClient.getColumns().clear();
+                tableViewClient.setItems(FXCollections.observableArrayList(fileAttributes.subList(1,fileAttributes.size())));
+                tableViewClient.getColumns().addAll(nameCol,fileModificationDateCol,typeCol,sizeCol);
             });
 
         } else {
@@ -203,8 +255,8 @@ public class MainController implements Initializable {
             currentClientDir = new ArrayList<>();
             fileAttributes = new ArrayList<>();
 
-            viewClient.getItems().clear();
-            viewClient.getItems().addAll(getClientFiles());
+            //viewClient.getItems().clear();
+            //viewClient.getItems().addAll(getClientFiles());
 
             this.net = new Net("localhost", 8189);
 
@@ -226,10 +278,13 @@ public class MainController implements Initializable {
 
     @FXML
     public void upload(ActionEvent actionEvent) throws IOException {
+        /*
         String fileName = viewClient.getSelectionModel().getSelectedItem();
         net.write(new FileUploadMessage(clientDir.resolve(fileName)));
         viewClient.getItems().clear();
         viewClient.getItems().addAll(getClientFiles());
+
+         */
     }
 
     @FXML

@@ -11,6 +11,7 @@ public class FileAttribute implements Serializable {
     private final Boolean isFile;
     private final Boolean isDir;
     private final Boolean isLink;
+    private final String fileType;
     private final String type;
     private final FileTime fileModificationDate;
     private final long size;
@@ -24,6 +25,7 @@ public class FileAttribute implements Serializable {
         this.type = type;
         this.fileModificationDate = fileModificationDate;
         this.size = size;
+        this.fileType = getFileType();
     }
 
     public String getCode() {
@@ -58,6 +60,19 @@ public class FileAttribute implements Serializable {
         return size;
     }
 
+    public String getFileType() {
+        if (getDir()) {
+            return  "Директория";
+        } else if(getLink()) {
+            return "Ссылка";
+
+        } else if (getFile()) {
+            return "Файл";
+        } else {
+            return "Неизвестно";
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -73,6 +88,6 @@ public class FileAttribute implements Serializable {
 
     @Override
     public String toString() {
-        return name;
+        return type;
     }
 }
