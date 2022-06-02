@@ -2,44 +2,92 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
 
-<AnchorPane minHeight="500.0" minWidth="200.0" prefHeight="900.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.senkinay.cloud.controllers.MainController">
+<AnchorPane minHeight="500.0" minWidth="200.0" prefHeight="900.0" prefWidth="978.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.senkinay.cloud.controllers.MainController">
    <BorderPane minHeight="200.0" minWidth="200.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <center>
          <AnchorPane prefHeight="819.0" prefWidth="500.0">
             <children>
-               <TabPane minHeight="500.0" minWidth="500.0" prefHeight="774.0" prefWidth="500.0" rotateGraphic="true" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <TabPane minHeight="500.0" minWidth="500.0" prefHeight="774.0" prefWidth="500.0" rotateGraphic="true" side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                  <tabs>
                    <Tab text="Client directories">
                      <content>
                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="700.0" prefWidth="514.0">
                               <children>
-                              
-                                 <ListView fx:id="viewClient" layoutX="-2.0" prefHeight="821.0" prefWidth="500.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                 <Button fx:id="upload" layoutX="87.0" layoutY="810.0" mnemonicParsing="false" onAction="#upload" prefHeight="27.0" prefWidth="143.0" text="upload" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="90.0" />
-                                 <Button fx:id="removeClient" layoutX="284.0" layoutY="810.0" mnemonicParsing="false"  prefHeight="27.0" prefWidth="146.0" text="delete" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="90.0" />
+                                 <BorderPane layoutY="-5.0" prefHeight="881.0" prefWidth="957.0">
+                                    <bottom>
+                                       <Pane prefHeight="61.0" prefWidth="957.0" BorderPane.alignment="CENTER">
+                                          <children>
+                                             <Button fx:id="uploadClient" layoutX="14.0" layoutY="18.0" mnemonicParsing="false" onAction="#upload" prefHeight="15.0" prefWidth="143.0" text="upload" />
+                                             <Button fx:id="openDir" layoutX="770.0" layoutY="18.0" mnemonicParsing="false" onAction="#openClientDir" prefHeight="25.0" prefWidth="158.0" text="Open Dir" />
+                                          </children>
+                                       </Pane>
+                                    </bottom>
+                                    <center>
+                                       <TableView fx:id="tableViewClient" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                         <columns>
+                                           <TableColumn prefWidth="75.0" text="C1" />
+                                           <TableColumn prefWidth="75.0" text="C2" />
+                                         </columns>
+                                       </TableView>
+                                    </center>
+                                    <left>
+                                       <TreeView fx:id="clientTreeDir" onMouseClicked="#clientTreeDirOnClicked" prefHeight="820.0" prefWidth="341.0" BorderPane.alignment="CENTER" />
+                                    </left>
+                                 </BorderPane>
                               </children>
                            </AnchorPane>
                      </content>
                    </Tab>
                    <Tab text="Server directories">
                      <content>
-                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                              <children>
-                                 <ListView fx:id="viewServer" prefHeight="800.0" prefWidth="500.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                 <Button fx:id="download" layoutX="79.0" layoutY="808.0" mnemonicParsing="false" onAction="#download" prefHeight="27.0" prefWidth="143.0" text="download" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="90.0" />
-                                 <Button fx:id="removeServer" layoutX="273.0" layoutY="808.0" mnemonicParsing="false"  prefHeight="27.0" prefWidth="146.0" text="delete" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="90.0" />
-                              </children>
-                           </AnchorPane>
+
+<!--                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">-->
+<!--                              <children>-->
+<!--                                 <ListView fx:id="viewServer" prefHeight="400.0" prefWidth="500.0" AnchorPane.bottomAnchor="445.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />-->
+<!--                                 <Button fx:id="download" layoutX="79.0" layoutY="808.0" mnemonicParsing="false" onAction="#download" prefHeight="27.0" prefWidth="143.0" text="download" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="90.0" />-->
+<!--                                 <Button fx:id="removeServer" layoutX="273.0" layoutY="808.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="146.0" text="delete" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="90.0" />-->
+<!--                              </children>-->
+<!--                           </AnchorPane>-->
+<!--                     -->
+
+                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="700.0" prefWidth="514.0">
+                           <children>
+                               <BorderPane layoutY="-5.0" prefHeight="881.0" prefWidth="957.0">
+                                   <bottom>
+                                       <Pane prefHeight="61.0" prefWidth="957.0" BorderPane.alignment="CENTER">
+                                           <children>
+                                               <Button fx:id="downloadServer" layoutX="14.0" layoutY="18.0" mnemonicParsing="false" onAction="#download" prefHeight="15.0" prefWidth="143.0" text="download" />
+                                           </children>
+                                       </Pane>
+                                   </bottom>
+                                   <center>
+                                       <TableView fx:id="tableViewServer" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                           <columns>
+                                               <TableColumn prefWidth="75.0" text="C1" />
+                                               <TableColumn prefWidth="75.0" text="C2" />
+                                           </columns>
+                                       </TableView>
+                                   </center>
+                                   <left>
+                                       <TreeView fx:id="serverTreeDir" onMouseClicked="#serverTreeDirOnClicked" prefHeight="820.0" prefWidth="341.0" BorderPane.alignment="CENTER" />
+                                   </left>
+                               </BorderPane>
+                           </children>
+                       </AnchorPane>
                      </content>
+
                    </Tab>
                  </tabs>
                </TabPane>

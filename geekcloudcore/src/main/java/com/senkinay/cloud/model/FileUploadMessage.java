@@ -12,7 +12,6 @@ public class FileUploadMessage extends AbstractMessage{
     private final byte[] bytes;
 
     public FileUploadMessage(Path path) throws IOException {
-        //this.name = path.getFileName().toString();
         this.name = path.toString();
         this.bytes = Files.readAllBytes(path);
 
