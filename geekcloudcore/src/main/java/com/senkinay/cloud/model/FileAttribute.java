@@ -1,7 +1,6 @@
 package com.senkinay.cloud.model;
 
 import java.io.Serializable;
-import java.nio.file.attribute.FileTime;
 import java.util.Date;
 import java.util.Objects;
 
@@ -13,10 +12,10 @@ public class FileAttribute implements Serializable {
     private final Boolean isLink;
     private final String fileType;
     private final String type;
-    private final FileTime fileModificationDate;
+    private final Date fileModificationDate;
     private final long size;
 
-    public FileAttribute(String code, String name, Boolean isFile, Boolean isDir, Boolean isLink, String type, FileTime fileModificationDate, long size) {
+    public FileAttribute(String code, String name, Boolean isFile, Boolean isDir, Boolean isLink, String type, Date fileModificationDate, long size) {
         this.code = code;
         this.name = name;
         this.isFile = isFile;
@@ -52,7 +51,7 @@ public class FileAttribute implements Serializable {
         return type;
     }
 
-    public FileTime getFileModificationDate() {
+    public Date getFileModificationDate() {
         return fileModificationDate;
     }
 
@@ -73,21 +72,22 @@ public class FileAttribute implements Serializable {
         }
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FileAttribute that = (FileAttribute) o;
-        return size == that.size && code.equals(that.code) && name.equals(that.name) && isFile.equals(that.isFile) && isDir.equals(that.isDir) && isLink.equals(that.isLink) && type.equals(that.type) && fileModificationDate.equals(that.fileModificationDate);
+        return size == that.size && code.equals(that.code) && name.equals(that.name) && isFile.equals(that.isFile) && isDir.equals(that.isDir) && isLink.equals(that.isLink) && fileType.equals(that.fileType) && type.equals(that.type) && fileModificationDate.equals(that.fileModificationDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(code, name, isFile, isDir, isLink, type, fileModificationDate, size);
+        return Objects.hash(code, name, isFile, isDir, isLink, fileType, type, fileModificationDate, size);
     }
 
     @Override
     public String toString() {
-        return type;
+        return name;
     }
 }

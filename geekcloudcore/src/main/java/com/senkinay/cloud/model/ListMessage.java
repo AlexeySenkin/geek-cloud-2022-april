@@ -10,13 +10,19 @@ import java.util.List;
 @Getter
 public class ListMessage extends AbstractMessage {
 
-    private final List<String> files;
+//    private final List<String> files;
+//
+//    public ListMessage(Path path) throws IOException {
+//        files = Files.list(path)
+//                .map(Path::getFileName)
+//                .map(Path::toString)
+//                .toList();
+//    }
 
-    public ListMessage(Path path) throws IOException {
-        files = Files.list(path)
-                .map(Path::getFileName)
-                .map(Path::toString)
-                .toList();
+    private final List<FileAttribute> files;
+
+    public ListMessage(List<FileAttribute> files) {
+        this.files = files;
     }
 
     @Override
