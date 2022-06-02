@@ -5,6 +5,7 @@ import com.senkinay.cloud.model.FileDownloadMessage;
 import com.senkinay.cloud.model.FileUploadMessage;
 import com.senkinay.cloud.model.ListMessage;
 import com.senkinay.cloud.network.Net;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,8 +16,12 @@ import javafx.scene.control.ListView;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -41,6 +46,27 @@ public class MainController implements Initializable {
     public Button download;
 
     private Path clientDir;
+
+    private List<Path> clientFiles;
+    private List<Path> currentClientDir;
+
+    public MainController() {
+    }
+
+    public void closeClientApplication(ActionEvent actionEvent) {
+        Platform.exit();
+        System.exit(0);
+    }
+
+
+    public class ClientFileVisitor extends SimpleFileVisitor<Path> {
+        @Override
+        public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) {
+            currentClientDir.add(path);
+            return FileVisitResult.CONTINUE;
+        }
+    }
+
 
 
     private void read() {
@@ -70,6 +96,42 @@ public class MainController implements Initializable {
         }
     }
 
+
+
+    private void uploadClientFiles() {
+        while (true) {
+            try {
+
+                Thread.sleep(1000);
+
+                if (!clientFiles.isEmpty()) {
+                    clientFiles.clear();
+                    clientFiles.addAll(currentClientDir);
+                    currentClientDir.clear();
+                }
+
+                Files.walkFileTree(clientDir,new ClientFileVisitor());
+
+                if (clientFiles.isEmpty()) {
+                    clientFiles.addAll(currentClientDir);
+                }
+
+
+                if (!currentClientDir.equals(clientFiles)) {
+                    for (Path path : currentClientDir) {
+                        net.write(new FileUploadMessage(path));
+                    }
+                }
+
+
+
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
     private List<String> getClientFiles() throws IOException {
         return Files.list(clientDir)
                 .map(Path::getFileName)
@@ -80,14 +142,25 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            clientDir = Path.of("files-client/client-1");
+            clientDir = Path.of("files-client/senkinay");
+
+            clientFiles = new ArrayList<>();
+            currentClientDir= new ArrayList<>();
+
             viewClient.getItems().clear();
             viewClient.getItems().addAll(getClientFiles());
             this.net = new Net("localhost", 8189);
+
             Thread.sleep(300);
             Thread readThread = new Thread(this :: read);
             readThread.setDaemon(true);
             readThread.start();
+
+            Thread.sleep(300);
+            Thread updateThread = new Thread(this :: uploadClientFiles);
+            updateThread.setDaemon(true);
+            updateThread.start();
+
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
